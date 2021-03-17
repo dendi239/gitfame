@@ -15,8 +15,8 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "gitfame",
-	Short: "Util to count some statistics over git-repo",
-	Long:  `gitfame calculates (lines, files, commits) for selected files `,
+	Short: "Gitfame counts some statistics over git-repo",
+	Long:  `gitfame calculates (lines, files, commits) for selected revision`,
 	Run: func(cmd *cobra.Command, args []string) {
 		authors, err := g.Gitfame()
 		if err != nil {
@@ -38,6 +38,6 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceVar(&f.Extensions, "extensions", []string{}, "extensions to count, e.g. '.go,.md'")
 	rootCmd.PersistentFlags().StringSliceVar(&f.Languages, "languages", []string{}, "languages to count, e.g. 'go,markdown'")
 	rootCmd.PersistentFlags().StringSliceVar(&f.Exclude, "exclude", []string{}, "glob patterns to exclude from counting")
-	rootCmd.PersistentFlags().StringSliceVar(&f.RestrictTo, "restrict-to", []string{}, "glob patterns all input files matched to")
-	rootCmd.PersistentFlags().BoolVar(&g.UseCommiter, "use-committer", false, "Using commiter as author")
+	rootCmd.PersistentFlags().StringSliceVar(&f.RestrictTo, "restrict-to", []string{}, "if specified, every counted file should match at least one of these globs")
+	rootCmd.PersistentFlags().BoolVar(&g.UseCommiter, "use-committer", false, "Using committer instead of author")
 }
