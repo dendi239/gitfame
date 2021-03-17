@@ -2,6 +2,7 @@ package filter
 
 import (
 	"path"
+	"strings"
 )
 
 type Filter struct {
@@ -33,7 +34,7 @@ func (f *Filter) CanTake(filename string) bool {
 		if len(f.langExt) == 0 {
 			f.langExt = make(map[string]struct{})
 			for _, l := range f.Languages {
-				for _, ext := range languages[l].Extensions {
+				for _, ext := range languages[strings.ToLower(l)].Extensions {
 					f.langExt[ext] = struct{}{}
 				}
 			}
