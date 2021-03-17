@@ -29,7 +29,6 @@ export PATH="$GOPATH/bin:$PATH"
 ## Usage
 
 ```shell
-$ gitfame --help
 gitfame calculates (lines, files, commits) for selected revision
 
 Usage:
@@ -42,6 +41,7 @@ Flags:
   -h, --help                  help for gitfame
       --languages strings     languages to count, e.g. 'go,markdown'
       --order-by string       key for result sorting, one of: "lines", "commits", "files" (default "lines")
+  -p, --progress              shows actual progress during analyzing
       --repository string     path to repository (default ".")
       --restrict-to strings   if specified, every counted file should match at least one of these globs
       --revision string       revision to analyze (default "HEAD")

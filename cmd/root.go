@@ -40,4 +40,5 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceVar(&f.Exclude, "exclude", []string{}, "glob patterns to exclude from counting")
 	rootCmd.PersistentFlags().StringSliceVar(&f.RestrictTo, "restrict-to", []string{}, "if specified, every counted file should match at least one of these globs")
 	rootCmd.PersistentFlags().BoolVar(&g.UseCommiter, "use-committer", false, "Using committer instead of author")
+	rootCmd.PersistentFlags().BoolVarP(&g.Progress, "progress", "p", false, "shows actual progress during analyzing")
 }

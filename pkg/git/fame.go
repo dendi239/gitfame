@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -20,6 +21,7 @@ type GitContext struct {
 	Revision       string
 	Directory      string
 	UseCommiter    bool
+	Progress       bool
 	predicate      func(string) bool
 	maxOpenedFiles int
 }
@@ -44,21 +46,16 @@ func (g *GitContext) makeCommand(name string, args ...string) *exec.Cmd {
 }
 
 func (g *GitContext) Gitfame() ([]AuthorInfo, error) {
-	start := time.Now()
-
 	filenames, err := g.LsTree()
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Fprintf(
-		os.Stderr, "[%5.2fs] %d filenames generated!\n",
-		time.Since(start).Seconds(), len(filenames))
-
 	commits := make(map[string]*CommitInfo)
 	authoredFiles := make(map[string]int)
 	authoredCommits := make(map[string]map[string]struct{})
 
+	var completeFiles int
 	var mu sync.Mutex
 
 	runRunRun := make(chan struct{}, g.maxOpenedFiles)
@@ -110,6 +107,7 @@ func (g *GitContext) Gitfame() ([]AuthorInfo, error) {
 					commits[sha] = fileVal
 				}
 			}
+			completeFiles++
 			mu.Unlock()
 
 			wg.Done()
@@ -117,11 +115,27 @@ func (g *GitContext) Gitfame() ([]AuthorInfo, error) {
 		}(file)
 	}
 
+	if g.Progress {
+		wg.Add(1)
+		go func() {
+			l := len(strconv.Itoa(len(filenames)))
+			spec := fmt.Sprintf("%%%dd", l)
+			for {
+				time.Sleep(time.Microsecond * 50)
+				fmt.Fprintf(os.Stderr, "\r"+spec+"/"+spec+" files done!", completeFiles, len(filenames))
+				if completeFiles == len(filenames) {
+					break
+				}
+			}
+			fmt.Fprintf(os.Stderr, "\n")
+			wg.Done()
+		}()
+	}
+
 	wg.Wait()
 	for j := 0; j < g.maxOpenedFiles; j++ {
 		<-runRunRun
 	}
-	fmt.Fprintf(os.Stderr, "[%5.2fs] files analyzed!\n", time.Since(start).Seconds())
 
 	authors := make(map[string]*AuthorInfo)
 	for author, authorCommits := range authoredCommits {
@@ -159,8 +173,6 @@ func (g *GitContext) Gitfame() ([]AuthorInfo, error) {
 	for _, author := range authors {
 		authorsList = append(authorsList, *author)
 	}
-
-	fmt.Fprintf(os.Stderr, "[%5.2fs] build list!\n", time.Since(start).Seconds())
 
 	return authorsList, nil
 }
