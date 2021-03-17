@@ -6,7 +6,7 @@ Command line tool for analyzing git-repo
 
 For simple installation you need only
 ```shell
-$ go get -u github.com/dendi239/gitfame
+$ go install github.com/dendi239/gitfame@latest
 ```
 
 You can build from source using following:
