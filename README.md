@@ -18,7 +18,7 @@ $ go install ./...
 
 ### Troubleshooting
 
-Both of methods described above will install executable to `$GOPATH/bin`, or `$GOBIN` so make sure it's added to `$PATH` (following example assumes that you use `zsh`)
+Both of methods described above **require go 1.16** and will install executable to `$GOPATH/bin`, or `$GOBIN` so make sure it's added to `$PATH` (following example assumes that you use `zsh`)
 ```shell
 $ echo '# Go lang
 export GOPATH="$HOME/go"
@@ -28,7 +28,7 @@ export PATH="$GOPATH/bin:$PATH"
 
 ## Usage
 
-```shell
+```text
 gitfame calculates (lines, files, commits) for selected revision
 
 Usage:
